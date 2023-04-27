@@ -9,7 +9,7 @@ require("dotenv").config();
 app.use(express.json());
 
 // autoload routes
-readdirSync("./routes", {}).map((r) => app.use(require(`./routes/${r}`)));
+// readdirSync("./routes", {}).map((r) => app.use(require(`./routes/${r}`)));
 
 // simple route
 app.get("/", (req, res) => {
