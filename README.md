@@ -1,2 +1,2 @@
-# wifi-strength-api
-An Api to get Wifi strength to render different UI in the frontend. Express JS and MySql database used to store the signal 
+# appointents schedular
+An Api to make a custmomised appointment schedule for hospitals. allowing for overbookings, cutomised bookings slots etc 
