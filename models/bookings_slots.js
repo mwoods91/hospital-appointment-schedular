@@ -1,29 +1,26 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
-class TimeSlot extends Sequelize.Model {
-  constructor(
-    hospital_id,
-    start_time,
-    end_time,
-    max_bookings,
-    current_bookings
-  ) {
+class BusinessHours extends Sequelize.Model {
+  constructor(hospital_id, days_of_week, start_time, end_time) {
     super();
     this.hospital_id = hospital_id;
+    this.days_of_week = days_of_week;
     this.start_time = start_time;
     this.end_time = end_time;
-    this.max_bookings = max_bookings;
-    this.current_bookings = current_bookings;
   }
 }
 
-TimeSlot.init(
+BusinessHours.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+    days_of_week: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     start_time: {
       type: DataTypes.TIME,
@@ -43,27 +40,17 @@ TimeSlot.init(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    max_bookings: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 2,
-    },
-    max_overbookings: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
-    },
   },
   {
     sequelize,
-    tableName: "time_slots",
+    tableName: "booking_slots",
     timestamps: false,
   }
 );
 
 (async () => {
-  await TimeSlot.sync({ alter: true });
+  await BusinessHours.sync({ alter: true });
   console.log("timeSlot model synced");
 })();
 
-module.exports = TimeSlot;
+module.exports = BusinessHours;

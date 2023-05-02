@@ -32,11 +32,11 @@ Patient.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    title: {
+    address: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },
-    note: {
+    dob: {
       type: DataTypes.STRING(255),
       allowNull: true,
     },

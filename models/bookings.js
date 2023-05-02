@@ -2,12 +2,14 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
 class Bookings extends Sequelize.Model {
-  constructor(hospital_id, time_slot_id, start_time, end_time) {
+  constructor(hospital_id, time_slot_id, start_time, end_time, title, note) {
     super();
     this.hospital_id = hospital_id;
     this.time_slot_id = time_slot_id;
     this.start_time = start_time;
     this.end_time = end_time;
+    this.title = title;
+    this.note = note;
   }
 }
 
@@ -32,7 +34,7 @@ Bookings.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: "time_slots",
+        model: "bookings_slots",
         key: "id",
       },
       onUpdate: "CASCADE",
@@ -44,6 +46,14 @@ Bookings.init(
     },
     end_time: {
       type: DataTypes.DATE,
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    note: {
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
   },

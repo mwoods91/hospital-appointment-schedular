@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
-class BlockedDates extends Sequelize.Model {
+class AllowedCustomDates extends Sequelize.Model {
   constructor(hospital_id, start_time, end_time) {
     super();
     this.hospital_id = hospital_id;
@@ -10,12 +10,21 @@ class BlockedDates extends Sequelize.Model {
   }
 }
 
-BlockedDates.init(
+AllowedCustomDates.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
+    },
+
+    start_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    end_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     hospital_id: {
       type: DataTypes.INTEGER,
@@ -27,33 +36,25 @@ BlockedDates.init(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    start_time: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
-    end_time: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
   },
   {
     sequelize,
-    tableName: "blocked_dates",
+    tableName: "allow_custom_dates",
     timestamps: false,
   }
 );
 
 (async () => {
-  await BlockedDates.sync({ alter: true });
-  console.log("BlockedDates model synced");
+  await AllowedCustomDates.sync({ alter: true });
+  console.log("Allowed Dates model synced");
 })();
 
 //get all allowed custom dates
-BlockedDates.getAll = async (res) => {
+AllowedCustomDates.getAll = async (res) => {
   // Pass in res object as a parameter
   try {
     const [results, metadata] = await sequelize.query(
-      "SELECT * FROM blocked_dates"
+      "SELECT * FROM allow_custom_dates"
     );
     res.json(results);
   } catch (error) {
@@ -62,10 +63,10 @@ BlockedDates.getAll = async (res) => {
   }
 };
 
-BlockedDates.findById = async (id, res) => {
+AllowedCustomDates.findById = async (id, res) => {
   try {
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM blocked_dates WHERE hospital_id = '${id}'`
+      `SELECT * FROM allow_custom_dates WHERE hospital_id = '${id}'`
     );
     if (results.length === 0) {
       return res.status(404).json({ message: "No Results found" });
@@ -77,10 +78,10 @@ BlockedDates.findById = async (id, res) => {
   }
 };
 
-BlockedDates.create = async (start_date, end_date, hospital_id, res) => {
+AllowedCustomDates.create = async (start_date, end_date, hospital_id, res) => {
   try {
     const [results, metadata] = await sequelize.query(
-      `INSERT INTO blocked_dates (hospital_id, start_time, end_time) VALUES ('${hospital_id}',${start_date}, '${end_date}')`
+      `INSERT INTO allow_custom_dates (start_date, end_date, hospital_id) VALUES (${start_date}, '${end_date}', '${hospital_id}')`
     );
     if (res && results) {
       // check if both res and results are defined
@@ -101,7 +102,7 @@ BlockedDates.create = async (start_date, end_date, hospital_id, res) => {
   }
 };
 
-BlockedDates.updateById = async (
+AllowedCustomDates.updateById = async (
   id,
   start_date,
   end_date,
@@ -111,7 +112,7 @@ BlockedDates.updateById = async (
   try {
     // Check if the hospital exists with the id
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM blocked_dates WHERE id = ${id}`
+      `SELECT * FROM allow_custom_dates WHERE id = ${id}`
     );
 
     if (results.length === 0) {
@@ -120,7 +121,7 @@ BlockedDates.updateById = async (
       });
     }
     await sequelize.query(
-      `UPDATE blocked_dates SET start_time= hospital_id = '${hospital_id}' , '${start_date}', end_time = '${end_date}' WHERE id = ${id}`
+      `UPDATE allow_custom_dates SET start_date= '${start_date}', end_date = '${end_date}', hospital_id = '${hospital_id}' WHERE id = ${id}`
     );
     res.status(200).json({
       message: "custom date updated successfully",
@@ -139,28 +140,28 @@ BlockedDates.updateById = async (
   }
 };
 
-BlockedDates.delete = async (id, res) => {
+AllowedCustomDates.delete = async (id, res) => {
   try {
     // Check if the hospital exists with the id
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM blocked_dates WHERE id = ${id}`
+      `SELECT * FROM allow_custom_dates WHERE id = ${id}`
     );
 
     if (results.length === 0) {
       return res.status(404).json({
-        message: `blocked_dates with id ${id} not found`,
+        message: `allow_custom_dates with id ${id} not found`,
       });
     }
     // Delete hospital
-    await sequelize.query(`DELETE FROM blocked_dates WHERE id = ${id}`);
-    res.json({ message: `blocked_dates ${id} deleted successfully` });
+    await sequelize.query(`DELETE FROM allow_custom_dates WHERE id = ${id}`);
+    res.json({ message: `allow_custom_dates ${id} deleted successfully` });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };
 
-BlockedDates.deleteAll = async (req, res) => {
+AllowedCustomDates.deleteAll = async (req, res) => {
   try {
     // Delete all records
     const [results, metadata] = await sequelize.query(
@@ -175,4 +176,4 @@ BlockedDates.deleteAll = async (req, res) => {
   }
 };
 
-module.exports = BlockedDates;
+module.exports = AllowedCustomDates;

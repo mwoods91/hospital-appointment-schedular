@@ -8,8 +8,11 @@ require("dotenv").config();
 // middlewares
 app.use(express.json());
 
-// autoload routes
-// readdirSync("./routes", {}).map((r) => app.use(require(`./routes/${r}`)));
+// parse requests of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+//autoload routes
+readdirSync("./routes", {}).map((r) => app.use(require(`./routes/${r}`)));
 
 // simple route
 app.get("/", (req, res) => {

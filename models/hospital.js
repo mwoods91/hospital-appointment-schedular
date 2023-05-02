@@ -2,21 +2,11 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
 class Hospital extends Sequelize.Model {
-  constructor(
-    code,
-    name,
-    custom_time_slots,
-    max_bookings_per_slot,
-    override_overbooking,
-    max_overbookings_per_day
-  ) {
+  constructor(code, name, address) {
     super();
     this.code = code;
     this.name = name;
-    this.custom_time_slots = custom_time_slots;
-    this.max_bookings_per_slot = max_bookings_per_slot;
-    this.override_overbooking = override_overbooking;
-    this.max_overbookings_per_day = max_overbookings_per_day;
+    this.address = address;
   }
 }
 
@@ -36,25 +26,9 @@ Hospital.init(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    custom_time_slots: {
-      type: DataTypes.BOOLEAN,
+    address: {
+      type: DataTypes.STRING(255),
       allowNull: false,
-      defaultValue: false,
-    },
-    max_bookings_per_slot: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 2,
-    },
-    override_overbooking: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: false,
-    },
-    max_overbookings_per_day: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0,
     },
   },
   {
@@ -65,8 +39,123 @@ Hospital.init(
 );
 
 (async () => {
-  await Hospital.sync({ alter: true });
+  await Hospital.sync();
   console.log("Hospital model synced");
 })();
+
+Hospital.getAll = async (res) => {
+  // Pass in res object as a parameter
+  try {
+    const [results, metadata] = await sequelize.query("SELECT * FROM hospital");
+    res.json(results);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+Hospital.findById = async (id, res) => {
+  try {
+    const [results, metadata] = await sequelize.query(
+      `SELECT * FROM hospital WHERE id = '${id}'`
+    );
+    if (results.length === 0) {
+      return res.status(404).json({ message: "Hospital not found" });
+    }
+    res.json(results[0]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+Hospital.create = async (code, name, address, res) => {
+  try {
+    const [results, metadata] = await sequelize.query(
+      `INSERT INTO hospital (code, name, address) VALUES (${code}, '${name}', '${address}')`
+    );
+    if (res && results) {
+      // check if both res and results are defined
+      res.status(201).json({
+        message: "Hospital created successfully",
+        data: {
+          code,
+          name,
+          address,
+        },
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    if (res) {
+      res.status(500).json({ message: "Internal server Error" });
+    }
+  }
+};
+
+Hospital.updateById = async (id, code, name, address, res) => {
+  try {
+    // Check if the hospital exists with the id
+    const [results, metadata] = await sequelize.query(
+      `SELECT * FROM hospital WHERE id = ${id}`
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        message: `Hospital with id ${id} not found`,
+      });
+    }
+    await sequelize.query(
+      `UPDATE hospital SET code = '${code}', name = '${name}', address = '${address}' WHERE id = ${id}`
+    );
+    res.status(200).json({
+      message: "Hospital updated successfully",
+      data: {
+        code,
+        name,
+        address,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (res) {
+      res.status(500).json({ message: "Internal server Error" });
+    }
+  }
+};
+
+Hospital.delete = async (id, res) => {
+  try {
+    // Check if the hospital exists with the id
+    const [results, metadata] = await sequelize.query(
+      `SELECT * FROM hospital WHERE id = ${id}`
+    );
+
+    if (results.length === 0) {
+      return res.status(404).json({
+        message: `Hospital with id ${id} not found`,
+      });
+    }
+    // Delete hospital
+    await sequelize.query(`DELETE FROM hospital WHERE id = ${id}`);
+    res.json({ message: `Hospital ${id} deleted successfully` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+Hospital.deleteAll = async (req, res) => {
+  try {
+    // Delete all records
+    const [results, metadata] = await sequelize.query("DELETE FROM hospital");
+    res.json({
+      message: "All hospitals deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 module.exports = Hospital;
