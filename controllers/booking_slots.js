@@ -1,16 +1,18 @@
-const LetterTemplates = require("../models/letter_templates");
+const BusinessHours = require("../models/bookings_slots");
 
 // get all Hospitals from the database
-exports.getAllLetterTemplates = async (req, res) => {
+exports.getAllBookingSlots = async (req, res) => {
   try {
-    await LetterTemplates.getAll(res); // Pass in res object to the model function
+    await BusinessHours.getAll(res); // Pass in res object to the model function
   } catch (err) {
-    res.json({ message: "Some error occurred while retrieving hospitals." });
+    res.json({
+      message: "Some error occurred while retrieving booking slots.",
+    });
   }
 };
 
 // get Hospitals by id from the database
-exports.getLetterTemplatesById = async (req, res) => {
+exports.getBookingSlotsById = async (req, res) => {
   try {
     const { id } = req.body;
     if (!id) {
@@ -20,35 +22,44 @@ exports.getLetterTemplatesById = async (req, res) => {
     }
 
     //fetch hospital by ID
-    await LetterTemplates.findById(id, res); // Pass in res object to the model function
+    await BusinessHours.findById(id, res); // Pass in res object to the model function
   } catch (err) {
     res.json({ message: "Some error occurred while retrieving hospitals." });
   }
 };
 
 // Create new  hospital in  the database
-exports.createNewLetterTemplates = async (req, res) => {
+exports.createNewBookingSlots = async (req, res) => {
   try {
-    const { template_name, body, hospital_id } = req.body;
+    const businessHours = req.body;
 
     // Check if any required field is missing
-    if (!code || !name || !address) {
+    if (!businessHours) {
       return res.status(400).json({
-        message: "Please provide code, name, and address.",
+        message: "Please provide all values",
       });
     }
 
+    const values = businessHours
+      .map(
+        ({ hospital_id, days_of_week, start_time, end_time }) =>
+          `(${hospital_id}, ${days_of_week}, '${start_time}', '${end_time}')`
+      )
+      .join(", ");
+
     //create the new hospital
-    await LetterTemplates.create(template_name, body, hospital_id, res);
+    await BusinessHours.create(values, res);
   } catch (err) {
-    res.json({ message: "Some error occurred while retrieving hospitals." });
+    res.json({
+      message: "Some error occurred while retrieving booking slots.",
+    });
   }
 };
 
 // update  hospital by id in  the database
-exports.updateLetterTemplatesById = async (req, res) => {
+exports.updateBookingSlotsById = async (req, res) => {
   try {
-    const { id, template_name, body } = req.body;
+    const { id, hospital_id, days_of_week, start_time, end_time } = req.body;
     // Check if any required field is missing
     if (!id) {
       return res.status(400).json({
@@ -57,14 +68,21 @@ exports.updateLetterTemplatesById = async (req, res) => {
     }
 
     //update hospital by id
-    await LetterTemplates.updateById(id, template_name, body, res);
+    await BusinessHours.updateById(
+      id,
+      hospital_id,
+      days_of_week,
+      start_time,
+      end_time,
+      res
+    );
   } catch (err) {
     res.json({ message: "Some error occurred while retrieving hospitals." });
   }
 };
 
 //delete hospital by ID
-exports.deleteLetterTemplatesById = async (req, res) => {
+exports.deleteBookingSlotsById = async (req, res) => {
   try {
     const { id } = req.body;
     // Check if any required field is missing
@@ -75,17 +93,17 @@ exports.deleteLetterTemplatesById = async (req, res) => {
     }
 
     //delete the new hospital
-    await LetterTemplates.delete(id, res);
+    await BusinessHours.delete(id, res);
   } catch (err) {
     res.json({ message: "Some error occurred while retrieving hospitals." });
   }
 };
 
 //delete all records from database
-exports.deleteAllLetterTemplates = async (req, res) => {
+exports.deleteAllBookingSlots = async (req, res) => {
   try {
     //delete all hospitals
-    await LetterTemplates.deleteAll(req, res);
+    await BusinessHours.deleteAll(req, res);
   } catch (err) {
     res.json({
       message: "Some error occurred while trying to delete hospitals.",
