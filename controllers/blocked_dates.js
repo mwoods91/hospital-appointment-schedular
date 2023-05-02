@@ -84,7 +84,7 @@ exports.deleteBlockedDateById = async (req, res) => {
 };
 
 //delete all records from database
-exports.deleteAllBlockedDateById = async (req, res) => {
+exports.deleteAllBlockedDates = async (req, res) => {
   try {
     //delete all hospitals
     await BlockedDates.deleteAll(req, res);

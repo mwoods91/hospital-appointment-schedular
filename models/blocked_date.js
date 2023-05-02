@@ -96,7 +96,7 @@ BlockedDates.create = async (start_date, end_date, hospital_id, res) => {
   } catch (error) {
     console.error(error);
     if (res) {
-      res.status(500).json({ message: "Internal server Error" });
+      res.status(500).json({ message: "Internal server Error", sqlMessage });
     }
   }
 };
@@ -120,7 +120,7 @@ BlockedDates.updateById = async (
       });
     }
     await sequelize.query(
-      `UPDATE blocked_dates SET start_time= hospital_id = '${hospital_id}' , '${start_date}', end_time = '${end_date}' WHERE id = ${id}`
+      `UPDATE blocked_dates SET hospital_id = '${hospital_id}' , start_time = '${start_date}', end_time = '${end_date}' WHERE id = ${id}`
     );
     res.status(200).json({
       message: "custom date updated successfully",

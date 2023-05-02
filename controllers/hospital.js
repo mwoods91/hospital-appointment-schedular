@@ -10,7 +10,7 @@ exports.getAllHospitals = async (req, res) => {
 };
 
 // get Hospitals by id from the database
-exports.hospital_by_id = async (req, res) => {
+exports.getHospitalById = async (req, res) => {
   try {
     const { id } = req.body;
     if (!id) {
@@ -27,7 +27,7 @@ exports.hospital_by_id = async (req, res) => {
 };
 
 // Create new  hospital in  the database
-exports.create_new_hospital = async (req, res) => {
+exports.createNewHospital = async (req, res) => {
   try {
     const { code, name, address } = req.body;
 
@@ -46,7 +46,7 @@ exports.create_new_hospital = async (req, res) => {
 };
 
 // update  hospital by id in  the database
-exports.update_hospital_by_id = async (req, res) => {
+exports.updateHospitalById = async (req, res) => {
   try {
     const { id, code, name, address } = req.body;
     // Check if any required field is missing
@@ -64,7 +64,7 @@ exports.update_hospital_by_id = async (req, res) => {
 };
 
 //delete hospital by ID
-exports.delete_hospital_by_id = async (req, res) => {
+exports.deleteHospitalById = async (req, res) => {
   try {
     const { id } = req.body;
     // Check if any required field is missing
@@ -82,7 +82,7 @@ exports.delete_hospital_by_id = async (req, res) => {
 };
 
 //delete all records from database
-exports.delete_all_hospitals = async (req, res) => {
+exports.deleteAllHospitals = async (req, res) => {
   try {
     //delete all hospitals
     await Hospital.deleteAll(req, res);
