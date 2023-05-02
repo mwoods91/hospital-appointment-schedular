@@ -122,7 +122,6 @@ LetterTemplates.create = async (
 
 LetterTemplates.updateById = async (template_name, body, hospital_id, res) => {
   try {
-    const isUpdated = 1;
     // Check if the hospital exists with the id
     const [results, metadata] = await sequelize.query(
       `SELECT * FROM letter_templates WHERE hospital_id = ${hospital_id}`
