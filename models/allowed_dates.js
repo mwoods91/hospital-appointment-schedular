@@ -81,7 +81,7 @@ AllowedCustomDates.findById = async (id, res) => {
 AllowedCustomDates.create = async (start_date, end_date, hospital_id, res) => {
   try {
     const [results, metadata] = await sequelize.query(
-      `INSERT INTO allow_custom_dates (start_date, end_date, hospital_id) VALUES (${start_date}, '${end_date}', '${hospital_id}')`
+      `INSERT INTO allow_custom_dates (start_date, end_date, hospital_id) VALUES ('${start_date}', '${end_date}', '${hospital_id}')`
     );
     if (res && results) {
       // check if both res and results are defined

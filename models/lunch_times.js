@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../database/index");
 
-class BusinessHours extends Sequelize.Model {
+class LunchTime extends Sequelize.Model {
   constructor(hospital_id, days_of_week, start_time, end_time) {
     super();
     this.hospital_id = hospital_id;
@@ -11,7 +11,7 @@ class BusinessHours extends Sequelize.Model {
   }
 }
 
-BusinessHours.init(
+LunchTime.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -43,18 +43,18 @@ BusinessHours.init(
   },
   {
     sequelize,
-    tableName: "booking_slots",
+    tableName: "lunch_time",
     timestamps: false,
   }
 );
 
 (async () => {
-  await BusinessHours.sync({ alter: true });
-  console.log("booking_slots model synced");
+  await LunchTime.sync({ alter: true });
+  console.log("LunchTime model synced");
 })();
 
 //get all allowed custom dates
-BusinessHours.getAll = async (res) => {
+LunchTime.getAll = async (res) => {
   // Pass in res object as a parameter
   try {
     const [results, metadata] = await sequelize.query(
@@ -67,10 +67,10 @@ BusinessHours.getAll = async (res) => {
   }
 };
 
-BusinessHours.findById = async (hospital_id, res) => {
+LunchTime.findById = async (hospital_id, res) => {
   try {
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM booking_slots WHERE hospital_id = '${hospital_id}'`
+      `SELECT * FROM lunch_time WHERE hospital_id = '${hospital_id}'`
     );
 
     if (results.length === 0) {
@@ -89,10 +89,10 @@ BusinessHours.findById = async (hospital_id, res) => {
   }
 };
 
-BusinessHours.create = async (values, res) => {
+LunchTime.create = async (values, res) => {
   try {
     const [results, metadata] = await sequelize.query(`
-      INSERT INTO booking_slots (hospital_id, days_of_week, start_time, end_time)
+      INSERT INTO lunch_time (hospital_id, days_of_week, start_time, end_time)
       VALUES ${values}
     `);
     if (res && results) {
@@ -112,7 +112,7 @@ BusinessHours.create = async (values, res) => {
   }
 };
 
-BusinessHours.updateById = async (
+LunchTime.updateById = async (
   id,
   hospital_id,
   days_of_week,
@@ -123,19 +123,19 @@ BusinessHours.updateById = async (
   try {
     // Check if the hospital exists with the id
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM booking_slots WHERE id = ${id}`
+      `SELECT * FROM lunch_time WHERE id = ${id}`
     );
 
     if (results.length === 0) {
       return res.status(404).json({
-        message: `booking_slots with id ${id} not found`,
+        message: `lunch_time with id ${id} not found`,
       });
     }
     await sequelize.query(
-      `UPDATE booking_slots SET hospital_id= '${hospital_id}', days_of_week = '${days_of_week}', start_time = '${start_time}', end_time = '${end_time}'  WHERE id = '${id}'`
+      `UPDATE lunch_time SET hospital_id= '${hospital_id}', days_of_week = '${days_of_week}', start_time = '${start_time}', end_time = '${end_time}'  WHERE id = '${id}'`
     );
     res.status(200).json({
-      message: "booking_slots updated successfully",
+      message: "lunch_time updated successfully",
       data: {
         id,
         hospital_id,
@@ -152,35 +152,33 @@ BusinessHours.updateById = async (
   }
 };
 
-BusinessHours.delete = async (id, res) => {
+LunchTime.delete = async (id, res) => {
   try {
     // Check if the hospital exists with the id
     const [results, metadata] = await sequelize.query(
-      `SELECT * FROM booking_slots WHERE id = ${id}`
+      `SELECT * FROM lunch_time WHERE id = ${id}`
     );
 
     if (results.length === 0) {
       return res.status(404).json({
-        message: `booking_slots with id ${id} not found`,
+        message: `lunch_time with id ${id} not found`,
       });
     }
     // Delete hospital
-    await sequelize.query(`DELETE FROM booking_slots WHERE id = ${id}`);
-    res.json({ message: `booking_slots ${id} deleted successfully` });
+    await sequelize.query(`DELETE FROM lunch_time WHERE id = ${id}`);
+    res.json({ message: `lunch_time ${id} deleted successfully` });
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal Server Error");
   }
 };
 
-BusinessHours.deleteAll = async (req, res) => {
+LunchTime.deleteAll = async (req, res) => {
   try {
     // Delete all records
-    const [results, metadata] = await sequelize.query(
-      "DELETE FROM booking_slots"
-    );
+    const [results, metadata] = await sequelize.query("DELETE FROM lunch_time");
     res.json({
-      message: "All booking_slots deleted successfully",
+      message: "All lunch_time deleted successfully",
     });
   } catch (error) {
     console.error(error);
@@ -188,4 +186,4 @@ BusinessHours.deleteAll = async (req, res) => {
   }
 };
 
-module.exports = BusinessHours;
+module.exports = LunchTime;

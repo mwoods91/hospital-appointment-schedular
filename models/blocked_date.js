@@ -80,7 +80,7 @@ BlockedDates.findById = async (id, res) => {
 BlockedDates.create = async (start_date, end_date, hospital_id, res) => {
   try {
     const [results, metadata] = await sequelize.query(
-      `INSERT INTO blocked_dates (hospital_id, start_time, end_time) VALUES ('${hospital_id}',${start_date}, '${end_date}')`
+      `INSERT INTO blocked_dates (hospital_id, start_time, end_time) VALUES ('${hospital_id}','${start_date}', '${end_date}')`
     );
     if (res && results) {
       // check if both res and results are defined

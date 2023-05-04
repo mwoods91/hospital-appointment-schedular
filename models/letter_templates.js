@@ -19,7 +19,7 @@ LetterTemplates.init(
       autoIncrement: true,
     },
     template_name: {
-      type: DataTypes.TIME,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     body: {

@@ -1,18 +1,18 @@
-const BusinessHours = require("../models/bookings_slots");
+const LunchTime = require("../models/lunch_times");
 
 // get all Hospitals from the database
-exports.getAllBookingSlots = async (req, res) => {
+exports.getAllLunchTimes = async (req, res) => {
   try {
-    await BusinessHours.getAll(res); // Pass in res object to the model function
+    await LunchTime.getAll(res); // Pass in res object to the model function
   } catch (err) {
     res.json({
-      message: "Some error occurred while retrieving booking slots.",
+      message: "Some error occurred while retrieving lunch_time.",
     });
   }
 };
 
 // get Hospitals by id from the database
-exports.getBookingSlotsById = async (req, res) => {
+exports.getLunchTimesById = async (req, res) => {
   try {
     const { hospital_id } = req.body;
     if (!hospital_id) {
@@ -22,14 +22,14 @@ exports.getBookingSlotsById = async (req, res) => {
     }
 
     //fetch hospital by ID
-    await BusinessHours.findById(hospital_id, res); // Pass in res object to the model function
+    await LunchTime.findById(hospital_id, res); // Pass in res object to the model function
   } catch (err) {
-    res.json({ message: "Some error occurred while retrieving hospitals." });
+    res.json({ message: "Some error occurred while retrieving lunch_time." });
   }
 };
 
 // Create new  hospital in  the database
-exports.createNewBookingSlots = async (req, res) => {
+exports.createNewLunchTimes = async (req, res) => {
   try {
     const businessHours = req.body;
 
@@ -48,16 +48,16 @@ exports.createNewBookingSlots = async (req, res) => {
       .join(", ");
 
     //create the new hospital
-    await BusinessHours.create(values, res);
+    await LunchTime.create(values, res);
   } catch (err) {
     res.json({
-      message: "Some error occurred while retrieving booking slots.",
+      message: "Some error occurred while retrieving lunch_time.",
     });
   }
 };
 
 // update  hospital by id in  the database
-exports.updateBookingSlotsById = async (req, res) => {
+exports.updateLunchTimesById = async (req, res) => {
   try {
     const { id, hospital_id, days_of_week, start_time, end_time } = req.body;
     // Check if any required field is missing
@@ -68,7 +68,7 @@ exports.updateBookingSlotsById = async (req, res) => {
     }
 
     //update hospital by id
-    await BusinessHours.updateById(
+    await LunchTime.updateById(
       id,
       hospital_id,
       days_of_week,
@@ -77,12 +77,12 @@ exports.updateBookingSlotsById = async (req, res) => {
       res
     );
   } catch (err) {
-    res.json({ message: "Some error occurred while retrieving hospitals." });
+    res.json({ message: "Some error occurred while retrieving lunch_time." });
   }
 };
 
 //delete hospital by ID
-exports.deleteBookingSlotsById = async (req, res) => {
+exports.deleteLunchTimesById = async (req, res) => {
   try {
     const { id } = req.body;
     // Check if any required field is missing
@@ -93,20 +93,20 @@ exports.deleteBookingSlotsById = async (req, res) => {
     }
 
     //delete the new hospital
-    await BusinessHours.delete(id, res);
+    await LunchTime.delete(id, res);
   } catch (err) {
-    res.json({ message: "Some error occurred while retrieving hospitals." });
+    res.json({ message: "Some error occurred while retrieving lunch_time." });
   }
 };
 
 //delete all records from database
-exports.deleteAllBookingSlots = async (req, res) => {
+exports.deleteAllLunchTimes = async (req, res) => {
   try {
     //delete all hospitals
-    await BusinessHours.deleteAll(req, res);
+    await LunchTime.deleteAll(req, res);
   } catch (err) {
     res.json({
-      message: "Some error occurred while trying to delete hospitals.",
+      message: "Some error occurred while trying to delete lunch_time.",
     });
   }
 };
